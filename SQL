@@ -1,0 +1,112 @@
+ELECT *
+FROM workspace.default.customers_large
+LIMIT 10;
+
+SELECT *
+FROM workspace.default.orders_large
+LIMIT 10;
+
+SELECT *
+FROM workspace.default.products_large
+LIMIT 10;
+
+-- ========Q2:Inner join: Orders with Customer name and product nameS=========
+SELECT
+  o.OrderID,
+  o.OrderDate,
+  c.CustomerName,
+  p.ProductName,
+  o.Quantity
+FROM workspace.default.orders_large o
+INNER JOIN workspace.default.customers_large c ON o.CustomerID = c.CustomerID
+INNER JOIN workspace.default.products_large p ON o.ProductID = p.ProductID;
+
+
+
+-- ======Q3:left join all customers and their orders=====
+SELECT
+  c.CustomerID,
+  c.CustomerName,
+  c.Country,
+  o.OrderID,
+  o.OrderDate
+FROM workspace.default.customers_large c
+LEFT JOIN workspace.default.orders_large o ON c.CustomerID = o.CustomerID;
+
+-- =====Left Join Customers and their orders======
+SELECT
+  c.CustomerID,
+  c.CustomerName,
+  c.Country,
+  o.OrderDate,
+  o.ProductID,
+  o.Quantity
+FROM workspace.default.customers_large c
+LEFT JOIN workspace.default.orders_large o ON c.CustomerID = o.CustomerID;
+
+-- ====Left join Products order count=======
+SELECT
+  p.ProductID,
+  p.ProductName,
+  COALESCE(o.total_orders, 0) AS total_orders
+FROM workspace.default.products_large p
+LEFT JOIN (
+  SELECT
+    ProductID,
+    COUNT(*) AS total_orders
+  FROM workspace.default.orders_large
+  GROUP BY ProductID
+) o ON p.ProductID = o.ProductID;
+
+-- =======#Q5: Right join: Orders with Product info (Include Products not ordered)=======
+SELECT
+  o.OrderID,
+  o.OrderDate,
+  p.ProductID,
+  p.ProductName,
+  p.Price,
+  o.Quantity
+FROM workspace.default.orders_large o
+RIGHT JOIN workspace.default.products_large p ON o.ProductID = p.ProductID;
+
+-- ====Q6:Right join:customer info with orders(include all customers)====
+SELECT
+  c.CustomerID,
+  c.CustomerName,
+  c.Country,
+  o.OrderID,
+  o.OrderDate,
+  o.ProductID,
+  o.Quantity
+FROM workspace.default.orders_large o
+RIGHT JOIN workspace.default.customers_large c ON o.CustomerID = c.CustomerID;
+
+-- =====Q7: Full outer join:ALL customers and all orders==========
+SELECT
+  c.CustomerID,
+  c.CustomerName,
+  c.Country,
+  o.OrderID,
+  o.OrderDate,
+  o.ProductID,
+  o.Quantity
+FROM workspace.default.customers_large c
+FULL OUTER JOIN workspace.default.orders_large o ON c.CustomerID = o.CustomerID;
+
+-- ======Q8: Full outer join: ALL customers and all orders with product info======
+SELECT
+  c.CustomerID,
+  
+c.Country,
+  o.OrderID,
+  o.OrderDate,
+  o.ProductID,
+  p.ProductName,
+  p.Price,
+  o.Quantity
+FROM workspace.default.customers_large c
+FULL OUTER JOIN workspace.default.orders_large o ON c.CustomerID = o.CustomerID
+LEFT JOIN workspace.default.products_large p ON o.ProductID = p.ProductID;
+
+
+
